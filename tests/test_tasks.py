@@ -90,7 +90,7 @@ def test_filters_search_and_pagination(client):
     _, author = make_user(client, "author@example.com")
     for index in range(5):
         create_task(client, author, title=f"Задача {index}")
-    create_task(client, author, title="Релиз версии 1.0")
+    create_task(client, author, title="Release 1.0")
     done = create_task(client, author, title="Старая задача")
     client.patch(f"/tasks/{done['id']}", json={"status": "done"}, headers=author)
 
@@ -103,5 +103,5 @@ def test_filters_search_and_pagination(client):
     assert len(second["items"]) == 1
 
     assert client.get("/tasks", params={"status": "done"}, headers=author).json()["total"] == 1
-    assert client.get("/tasks", params={"q": "релиз"}, headers=author).json()["total"] == 1
+    assert client.get("/tasks", params={"q": "RELEASE"}, headers=author).json()["total"] == 1
     assert client.get("/tasks", params={"limit": 1000}, headers=author).status_code == 422

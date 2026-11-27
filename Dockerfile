@@ -10,7 +10,9 @@ COPY alembic.ini .
 COPY app app
 COPY migrations migrations
 
-RUN useradd --system --create-home taskboard
+RUN useradd --system --create-home taskboard \
+    && install -d -o taskboard /var/lib/taskboard
+ENV DATABASE_URL=sqlite:////var/lib/taskboard/taskboard.db
 USER taskboard
 
 EXPOSE 8000

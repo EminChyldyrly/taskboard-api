@@ -10,5 +10,8 @@ COPY alembic.ini .
 COPY app app
 COPY migrations migrations
 
+RUN useradd --system --create-home taskboard
+USER taskboard
+
 EXPOSE 8000
 CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]

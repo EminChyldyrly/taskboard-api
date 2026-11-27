@@ -22,7 +22,8 @@ The API is served at http://localhost:8000 and the interactive docs at http://lo
 | PATCH | `/tasks/{id}` | the author edits any field, the assignee only `status` |
 | DELETE | `/tasks/{id}` | author only |
 | POST, GET | `/tasks/{id}/comments` | comments, visible to the author and the assignee |
-| GET | `/health` | health check |
+| GET | `/health` | process liveness |
+| GET | `/ready` | database connectivity, HTTP 503 on failure |
 
 Tasks of other users answer `404` so their existence is not revealed.
 
@@ -38,3 +39,5 @@ Tests run against in-memory SQLite with a fresh database per test, so PostgreSQL
 ## License
 
 MIT
+
+Set `APP_ENV=production` and a shared random `SECRET_KEY` of at least 32 bytes for production. In development, omitting the key generates one per process and invalidates tokens after a restart. Generate a key with `python -c "import secrets; print(secrets.token_urlsafe(48))"`. The PostgreSQL credentials in Compose are for local use.

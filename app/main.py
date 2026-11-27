@@ -1,4 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+
+from app.deps import DbSession
 
 from app.routers import auth, comments, tasks
 
@@ -10,4 +14,13 @@ app.include_router(comments.router)
 
 @app.get("/health", tags=["service"])
 def health():
+    return {"status": "ok"}
+
+
+@app.get("/ready", tags=["service"])
+def ready(db: DbSession):
+    try:
+        db.execute(text("SELECT 1"))
+    except SQLAlchemyError as exc:
+        raise HTTPException(status_code=503, detail="Database unavailable") from exc
     return {"status": "ok"}

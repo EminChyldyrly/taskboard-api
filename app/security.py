@@ -38,7 +38,7 @@ def create_access_token(user_id: int) -> str:
 def decode_access_token(token: str) -> int | None:
     """Возвращает id пользователя или None, если токен недействителен."""
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[_ALGORITHM])
+        payload = jwt.decode(token, settings.secret_key, algorithms=[_ALGORITHM], options={"require": ["sub", "exp"]})
         return int(payload["sub"])
     except (jwt.PyJWTError, KeyError, ValueError):
         return None

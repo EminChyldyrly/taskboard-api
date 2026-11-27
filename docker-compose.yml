@@ -17,7 +17,8 @@ services:
     build: .
     environment:
       DATABASE_URL: postgresql+psycopg://taskboard:taskboard@db:5432/taskboard
-      SECRET_KEY: ${SECRET_KEY:-change-me-to-a-long-random-string-before-production}
+      APP_ENV: ${APP_ENV:-development}
+      SECRET_KEY: ${SECRET_KEY:-}
     ports:
       - "8000:8000"
     depends_on:

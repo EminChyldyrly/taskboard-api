@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.deps import DbSession
 from app.models import User
@@ -15,7 +16,13 @@ def register(payload: UserCreate, db: DbSession):
         raise HTTPException(status_code=409, detail="Пользователь с таким e-mail уже есть")
     user = User(email=payload.email, password_hash=hash_password(payload.password))
     db.add(user)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        if db.scalar(select(User).where(User.email == payload.email)) is not None:
+            raise HTTPException(status_code=409, detail="Пользователь с таким e-mail уже есть")
+        raise
     db.refresh(user)
     return user
 
